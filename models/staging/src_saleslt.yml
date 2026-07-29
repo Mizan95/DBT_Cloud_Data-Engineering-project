@@ -1,6 +1,6 @@
 # This is a SQL test performs 2 tests on the values in column AddressID:
 # 1. if values are unique
-# 2. if any NULL values are present 
+# 2. if any NULL values are present
 version: 2
 
 sources:
