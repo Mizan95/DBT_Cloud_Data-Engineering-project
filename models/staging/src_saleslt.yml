@@ -1,0 +1,17 @@
+# This is a SQL test performs 2 tests on the values in column AddressID:
+# 1. if values are unique
+# 2. if any NULL values are present 
+version: 2
+
+sources:
+  - name: bronze_saleslt
+    database: databricksv2 # The Unity Catalog catalog name
+    schema: bronze
+    tables:
+      - name: address
+        description: "Raw address data ingested from SalesLT database."
+        columns:
+          - name: AddressID
+            tests:
+              - unique
+              - not_null
