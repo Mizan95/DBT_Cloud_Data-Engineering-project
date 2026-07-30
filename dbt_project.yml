@@ -38,6 +38,7 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   saleslt_transformation:
     staging:
+      +catalog: databricksv2
       +materialized: table
       +file_format: delta
       +schema: silver

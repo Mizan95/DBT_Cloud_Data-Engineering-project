@@ -1,3 +1,4 @@
+-- This SQL file applies the transformation on the ModifiedDate column with the clean data macro in file clean_date.sql
 WITH source_data AS (
     SELECT * FROM {{ source('bronze_saleslt', 'address') }}
 )
