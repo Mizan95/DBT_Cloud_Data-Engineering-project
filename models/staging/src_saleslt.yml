@@ -1,12 +1,13 @@
-# This is a SQL test performs 2 tests on the values in column AddressID:
+# This is a test that performs 2 tests on the values in every ID column of every table in the bronze schema:
 # 1. if values are unique
 # 2. if any NULL values are present
 version: 2
 
 sources:
   - name: bronze_saleslt
-    database: databricksv2 # The Unity Catalog catalog name
+    database: databricksv2
     schema: bronze
+    description: "Raw relational data ingested from the on-premises SQL Server database into the Bronze lakehouse container."
     tables:
       - name: address
         description: "Raw address data ingested from SalesLT database."
@@ -15,3 +16,74 @@ sources:
             tests:
               - unique
               - not_null
+              
+      - name: customer
+        description: "Core customer profile data."
+        columns:
+          - name: CustomerID
+            description: "Primary key for the customer table."
+            tests:
+              - unique
+              - not_null
+
+      - name: product
+        description: "Master catalog table containing all items available for purchase."
+        columns:
+          - name: ProductID
+            description: "Primary key for the product table."
+            tests:
+              - unique
+              - not_null
+
+      - name: productcategory
+        description: "Hierarchical product grouping taxonomy definitions."
+        columns:
+          - name: ProductCategoryID
+            description: "Primary key for the product category table."
+            tests:
+              - unique
+              - not_null
+
+      - name: productdescription
+        description: "text descriptions of products."
+        columns:
+          - name: ProductDescriptionID
+            description: "Primary key for the product description table."
+            tests:
+              - unique
+              - not_null
+
+      - name: productmodel
+        description: "product model data."
+        columns:
+          - name: ProductModelID
+            description: "Primary key for the product model table."
+            tests:
+              - unique
+              - not_null
+
+      - name: salesorderdetail
+        description: "Line-item transactional metrics for individual sales receipts."
+        columns:
+          - name: SalesOrderDetailID
+            description: "Primary key for the sales order detail table."
+            tests:
+              - unique
+              - not_null
+
+      - name: salesorderheader
+        description: "Invoice-level transactional totals, customer data, and routing metadata."
+        columns:
+          - name: SalesOrderID
+            description: "Primary key for the sales order header table."
+            tests:
+              - unique
+              - not_null
+              
+      # no test on these tables
+      - name: productmodelproductdescription 
+        description: "Bridge table connecting product models to their text descriptions."
+
+      - name: customeraddress
+        description: "Bridge table connecting customer addresses to customers"
+

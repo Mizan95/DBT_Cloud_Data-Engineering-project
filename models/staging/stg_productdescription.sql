@@ -1,7 +1,7 @@
 -- This SQL file applies the transformation on all date columns with the clean date macro in file clean_date.sql
 -- CTE to highlight source
 WITH source_data AS (
-    SELECT * FROM {{ source('bronze_saleslt', 'address') }}
+    SELECT * FROM {{ source('bronze_saleslt', 'productdescription') }}
 )
 
 -- This block uses DBT jinja to loop through each column name and assess if it is a date
@@ -10,7 +10,7 @@ WITH source_data AS (
 -- else it returns the column name
 -- it also adds a timestamp column showing when dbt processed this change
 SELECT
-    {% for col in adapter.get_columns_in_relation(source('bronze_saleslt', 'address')) %}
+    {% for col in adapter.get_columns_in_relation(source('bronze_saleslt', 'productdescription')) %}
         {% if 'date' in col.name | lower %}
             {{ clean_date(col.name) }} AS {{ col.name }}
         {% else %}
