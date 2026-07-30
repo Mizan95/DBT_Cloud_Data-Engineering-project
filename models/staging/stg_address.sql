@@ -1,4 +1,10 @@
--- This SQL file applies the transformation on all date columns with the clean date macro in file clean_date.sql
+/*
+This SQL file applies 2 transformations:
+
+1. all date columns with the clean date macro in file clean_date.sql
+2. adds timestamp column showing when dbt processed this change
+*/
+
 -- CTE to highlight source
 WITH source_data AS (
     SELECT * FROM {{ source('bronze_saleslt', 'address') }}
