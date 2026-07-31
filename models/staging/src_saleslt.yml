@@ -1,4 +1,4 @@
-# This is a test that performs 2 tests on the values in every ID column of every table in the bronze schema:
+# This yml file performs 2 tests on the values in every ID column of every table in the bronze schema:
 # 1. if values are unique
 # 2. if any NULL values are present
 version: 2

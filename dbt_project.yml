@@ -35,10 +35,18 @@ clean-targets:         # directories to be removed by `dbt clean`
 # continue to be built as views. These settings can be overridden in the individual model files
 # using the `{{ config(...) }}` macro.
 
+# this block applies configurations for sql files (and generated tables) in the staging folder
 models:
   saleslt_transformation:
     staging:
+      +catalog: databricksv2 # the catalog connected to databricks
+      +materialized: table
+      +file_format: delta
+      +schema: silver # this creates a silver schema in databricks unity catalog
+
+# This block applies configs to the mart folder essentially creating a datamart for business stakeholders
+    marts:
       +catalog: databricksv2
       +materialized: table
       +file_format: delta
-      +schema: silver
+      +schema: gold # this creates a gold schema in databricks unity catalog for tables created in marts folder
