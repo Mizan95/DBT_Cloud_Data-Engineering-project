@@ -1,0 +1,1 @@
+In the Staging folder, there are tests which can be run

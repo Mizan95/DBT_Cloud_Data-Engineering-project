@@ -2,7 +2,7 @@
 # Name your project! Project names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
-name: 'my_new_project'
+name: 'saleslt_transformation'
 version: '1.0.0'
 config-version: 2
 
@@ -35,8 +35,20 @@ clean-targets:         # directories to be removed by `dbt clean`
 # continue to be built as views. These settings can be overridden in the individual model files
 # using the `{{ config(...) }}` macro.
 
+# this block applies configurations for sql files (and generated tables) in the staging folder
 models:
-  my_new_project:
-    # Applies to all files under models/example/
-    example:
+  saleslt_transformation:
+    staging:
+      +catalog: databricksv2 # the catalog connected to databricks
       +materialized: table
+      +file_format: delta
+      +schema: silver # this creates a silver schema in databricks unity catalog
+
+# This block applies configs to the mart folder essentially creating a datamart for business stakeholders
+    marts:
+      +catalog: databricksv2
+      +materialized: table
+      +file_format: delta
+# this makes a separate schema for sales folder in the mart.
+      sales:
+        +schema: gold_sales

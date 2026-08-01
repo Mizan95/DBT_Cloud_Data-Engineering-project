@@ -1,3 +1,9 @@
+## Notes:
+Staging folder contains data cleansing activty bronze --> silver
+Mart contains business-ready data silver --> gold
+
+
+-----------------
 Welcome to your new dbt project!
 
 ### Using the starter project
