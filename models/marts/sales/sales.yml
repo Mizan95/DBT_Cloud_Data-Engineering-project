@@ -3,7 +3,7 @@
 # 2. Defines a relationship between fct_sales.CustomerID and dim_customer.CustomerID
 # 3. Defines a relationship between bridge_customer_address.CustomerID and dim_customer.CustomerID
 # 4. Defines a relationship between bridge_customer_address.CustomerID and dim_address.AddressID
-# 
+#
 version: 2
 
 models:
@@ -17,8 +17,9 @@ models:
       - name: CustomerID
         tests:
           - relationships:
-              to: ref('dim_customer')
-              field: CustomerID
+              arguments:
+                to: ref('dim_customer')
+                field: CustomerID
 
   - name: dim_customer
     description: "Customer dimension table containing unique customer IDs. This connected to the address table with the bridge table called bridge_customer_address"
@@ -29,7 +30,7 @@ models:
           - not_null
 
   - name: dim_address
-    description: "Master geography dimension table containing unique physical addresses."
+    description: "Address dimension table containing unique physical addresses."
     columns:
       - name: AddressID
         tests:
@@ -43,11 +44,13 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('dim_customer')
-              field: CustomerID
+              arguments:
+                to: ref('dim_customer')
+                field: CustomerID
       - name: AddressID
         tests:
           - not_null
           - relationships:
-              to: ref('dim_address')
-              field: AddressID
+              arguments:
+                to: ref('dim_address')
+                field: AddressID
