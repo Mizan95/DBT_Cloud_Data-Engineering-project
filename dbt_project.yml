@@ -49,4 +49,6 @@ models:
       +catalog: databricksv2
       +materialized: table
       +file_format: delta
-      +schema: gold # this creates a gold schema in databricks unity catalog for tables created in marts folder
+# this makes a separate schema for sales folder in the mart.
+      sales:
+        +schema: gold_sales

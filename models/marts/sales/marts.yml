@@ -1,6 +1,8 @@
 # This yml file:
 # 1. performs unique and not_null tests in the ID columns of oulined tables
-# 2. Makes a relationship between fct_sales.CustomerID and dim_customer.CustomerID
+# 2. Defines a relationship between fct_sales.CustomerID and dim_customer.CustomerID
+# 3. Defines a relationship between bridge_customer_address.CustomerID and dim_customer.CustomerID
+# 4. Defines a relationship between bridge_customer_address.CustomerID and dim_address.AddressID
 # 
 version: 2
 
@@ -27,7 +29,7 @@ models:
           - not_null
 
   - name: dim_address
-    description: "Master geography dimension table containing unique physical address components."
+    description: "Master geography dimension table containing unique physical addresses."
     columns:
       - name: AddressID
         tests:
@@ -35,7 +37,7 @@ models:
           - not_null
 
   - name: bridge_customer_address
-    description: "Many-to-many bridge table mapping customer IDs to multiple addresses."
+    description: "Bridge table mapping customer IDs to multiple addresses. This addresses the many-to-many relationship issues with tables dim_address and dim_customer"
     columns:
       - name: CustomerID
         tests:
