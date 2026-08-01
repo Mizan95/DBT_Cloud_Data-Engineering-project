@@ -52,3 +52,7 @@ models:
 # this makes a separate schema for sales folder in the mart.
       sales:
         +schema: gold_sales
+        
+# this makes a separate schema for product folder in the mart.
+      product:
+        +schema: gold_product

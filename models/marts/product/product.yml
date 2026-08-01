@@ -1,0 +1,75 @@
+# This yml file:
+# 1. performs unique and not_null tests in the ID columns of oulined tables
+# 2. Defines a relationship between dim_product.ProductModelID and dim_productmodel.ProductModelID
+# 3. Defines a relationship between dim_product.ProductCategoryID and dim_productmodel.ProductCategoryID
+
+# 4. Defines a relationship between bridge_productmodel_productdescription.ProductDescriptionID and dim_productdescription.ProductDescriptionID
+# 5. Defines a relationship between bridge_productmodel_productdescription.ProductModelID and dim_productmodel.ProductModelID
+
+version: 2
+
+models:
+  - name: dim_product
+    description: "dimension product table."
+    columns:
+      - name: ProductID
+        tests:
+          - unique
+          - not_null
+      - name: ProductModelID
+        tests:
+          - not_null   
+          - relationships:
+              arguments:
+                to: ref('dim_productmodel')
+                field: ProductModelID
+      - name: ProductCategoryID
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_productcategory')
+                field: ProductCategoryID
+
+  - name: dim_productmodel
+    description: "dimension product model table."
+    columns:
+      - name: ProductModelID
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_productcategory
+    description: "dimension product category table."
+    columns:
+      - name: ProductCategoryID
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_productdescription
+    description: "dimension product description table."
+    columns:
+      - name: ProductDescriptionID
+        tests:
+          - unique
+          - not_null
+
+# Defines bridge table and its relationships to dim_productdescription and dim_productmodel
+  - name: bridge_productmodel_productdescription
+    description: "bridge table bridging product model table with product description table."
+    columns:
+      - name: ProductDescriptionID
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_productdescription')
+                field: ProductDescriptionID
+      - name: ProductModelID
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_productmodel')
+                field: ProductModelID

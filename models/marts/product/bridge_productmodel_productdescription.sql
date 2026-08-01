@@ -9,7 +9,7 @@ WITH productmodelproductdescription AS (
 SELECT
     ProductModelID,
     ProductDescriptionID,
-    Culture
+    Culture,
     CURRENT_TIMESTAMP() AS dbt_transformed_at
 
 FROM productmodelproductdescription
