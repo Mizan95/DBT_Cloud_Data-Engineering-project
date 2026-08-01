@@ -1,6 +1,22 @@
 ## Notes:
+
 Staging folder contains data cleansing activty bronze --> silver
-Mart contains business-ready data silver --> gold
+- creation of macro
+- setting up project yml
+- creation of staging sql files
+    - data cleansing all column headers (using Jinja)
+    - in Product model, transforms decimal numbers to two decimal points for the columns containing float numbers
+
+mart folder silver --> gold
+- sales mart
+- creating fct_sales table by inner joining stg_salesorderheader and stg_salesorderdetail models
+- creating address and customer dimension tables
+- creating customer and address bridge table to solve many-to-many relationship between address and customer dimension tables
+- configuring dimension tables and bridge tables (and their relationships) in the sales.yml files
+
+- product mart
+
+
 
 
 -----------------
