@@ -24,6 +24,9 @@ Staging folder contains data cleansing activty bronze --> silver
 - configuring dimension tables, bridge tables and their relationships in the product.yml file
 - adding product mart schema in dbt_project.yml file
 
+- creating dbt docs
+
+### Automation
 
 
 ---
