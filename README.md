@@ -1,3 +1,25 @@
+## Introduction
+In Azure Data Factory I built a pipeline pipelining data from onPrem SQL server to Bronze Data Lake container.
+
+Using Databricks and SQL scripts, I  copied all tables into Unity Catalog bronze folder.
+
+Using DBT, I built staging models and moved the data into silver folder in Databricks unity catalog.
+
+Then, I made two data marts: Sales and Product. Both these data marts were built in the gold folder in Databricks unity catalog.
+
+- pipeline diagram
+- security best practices such as Azure Key Vault
+
+## Tools I used
+
+
+## ETL Data Workflow on Medallion Architecture
+- image of data factory pipeline
+
+## Conclusion
+
+
+---------------------------
 ## Notes:
 
 Staging folder contains data cleansing activty bronze --> silver
