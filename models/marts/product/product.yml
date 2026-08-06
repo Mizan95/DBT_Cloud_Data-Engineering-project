@@ -73,3 +73,15 @@ models:
               arguments:
                 to: ref('dim_productmodel')
                 field: ProductModelID
+
+# Added fct_sales_product and referenced it to fct_sales table
+  - name: fct_sales_product
+    description: "Central transactional fact table referenced here to validate product metrics."
+    columns:
+      - name: ProductID
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: ProductID
