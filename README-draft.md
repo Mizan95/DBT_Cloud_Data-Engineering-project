@@ -1,7 +1,7 @@
 # DBT Data Engineering Project
 
 ## Introduction
-In this DBT data engineering pipeline project, I set out to build and automate a data pipeline moving data from an onPrem SQL server to Databricks Unity Catalog. Then, by using DBT on Medallion Architecture  perform transformations and create two data marts: Sales and Product. At the end of the pipeline, the resultant data marts were analysed via Power BI.
+In this DBT data engineering pipeline project, I set out to build and automate a data pipeline moving data from an onPrem SQL server to Databricks Unity Catalog. Then, by using DBT on Medallion Architecture  perform transformations and create two data marts: Sales and Product. At the end of the pipeline, the resultant data marts were analysed via Power BI. The pipeline was scheduled to automatically run daily.
 
 **Key Points of Note are below**:
 
@@ -86,15 +86,18 @@ The Azure Data Factory pipeline can also be seen below:
 
 4. Using a Web activity, the DBT transformation job is initiated by an API call. This uses the Token from the previous step. build: transform, data marts, details in DBT walkthrough section
 
-5. Then, the DBT run ID is stored inside a pipeline variable.
+5. Then, the DBT run ID is stored inside the pipeline variable dbt_run_id.
  
 6. Using an Until activity, there are 4 nested activities:
    1. A Wait activity waits for 20 seconds
    2. A Web activity (get_dbt_run) retrieves the DBT run ID and polls the DBT API checking if the DBT job was successful or failed.
-   3. The pipeline variable job_status is set here with some conditional logic. The logic is where if the output of get_dbt_run (the previous step) is 10, is sets the job_status variable as the string 'false', otherwise it sets it as the string 'true'.
+   3. The pipeline variable job_status is set here with some conditional logic. The logic is where if the output of get_dbt_run (the previous step) is 10, is sets the job_status variable as the string 'false', otherwise it sets it as the string 'true'.  
+   Why 10? 10 is the job status value returned by the DBT API indicating a successful job.
    4. An If activity which outlines the pipeline logic if the job is failed. This contains 2 nested activities:
-      1. If the job is successful, the pipeline stops polling the DBT API.
-      2. If the job is failed, the pipeline stops completely and returns an error message.
+      1. A set variable activity which checks the JSON output of the activity get_dbt_run.data.in_progress whether it is true or false. It then sets the dbt_job_status pipeline variable as this value as a string format.
+      2. A fail activity which stops the pipeline completely and returns an error message.
+7. On success, DBT builds staging models into a Silver container in Databricks Unity Catalog and two data marts: Sales and Product. Both these data marts were built in respective gold folders in Databricks unity catalog.  
+8. Then, Databricks Unity Catalog is connected to Power BI using the in-built Power BI connection file in Databricks. This allowed on-demand analysis of the most up-to-date data.
 
 - Link to dbt macros, models, staging --> silver, marts --> gold. 
 
