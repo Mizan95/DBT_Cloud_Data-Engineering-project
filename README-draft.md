@@ -20,7 +20,7 @@ In this DBT data engineering pipeline project, I set out to build and automate a
 
 The full data pipeline diagram can be seen below:
 
-![](assets\Screenshot_data-pipeline.png)
+![](assets/Screenshot_data-pipeline.png)
 
 
 The Azure Data Factory pipeline can also be seen below:
