@@ -30,10 +30,11 @@ The Azure Data Factory pipeline can also be seen below:
 ### Brief Explanation of Pipeline
 The pipeline ingested data from an on-prem SQL database into Azure Data Lake. Then, via a SQL script it was loaded into Databricks Unity Catalog in a Bronze container. Then, via a web activity a DBT access token was retrieved from Azure Keyvault and the DBT transformation and data marts job was run via another web activity by accessing the DBT API.  
 
-The transformation job was perfomed on the data in the Databricks Bronze container.  
+The transformation and data marts job was perfomed on the data in the Databricks Bronze container.  
 
 Lastly, an Until activity was used to poll the DBT API every 20 seconds to check if the DBT transformation and data marts job was complete returning either a success or fail message.  
-On fail, the pipeline stopped running. On success, the transformed data were loaded into a Silver container in Databricks Unity Catalog and the two data marts were loaded into their respective Gold containers. Thus, allowing easy access for different business stakeholders.
+On fail, the pipeline stopped running.  
+On success, the transformed data was loaded into a Silver container in Databricks Unity Catalog and the two data marts were loaded into their respective Gold containers. Thus, allowing easy access for different business stakeholders.
 
 
 -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -47,10 +48,7 @@ Using DBT, I built staging models and moved the data into silver folder in Datab
 
 Then, I made two data marts: Sales and Product. Both these data marts were built in the gold folder in Databricks unity catalog.
 
-
-
-
-- security best practices such as Azure Key Vault, maintainability with using pipeline parameters
+security best practices such as Azure Key Vault, maintainability with using pipeline parameters
 
 ## Tools I used
 - **DBT Cloud** - to perform modular transformations and build Sales and Product data marts using models and macros which were then loaded back into Databricks Unity Catalog.
@@ -72,7 +70,7 @@ Then, I made two data marts: Sales and Product. Both these data marts were built
 ## Detailed Explantion of Data Pipeline
 For reference, the full data pipeline diagram can be seen below:
 
-![](assets\Screenshot_data-pipeline.png)
+![](assets/Screenshot_data-pipeline.png)
 
 
 The Azure Data Factory pipeline can also be seen below:
