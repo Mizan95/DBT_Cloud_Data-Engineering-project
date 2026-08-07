@@ -1,11 +1,11 @@
 # DBT Data Engineering Project
 
 ## Introduction
-In this DBT data engineering pipeline project, I set out to build and automate a data pipeline moving data from an onPrem SQL server to Databricks Unity Catalog. Then, by using DBT on Medallion Archtecture  perform transformations and create two data marts: Sales and Product. At the end of the pipeline, the resultant data marts were analysed via Power BI.
+In this DBT data engineering pipeline project, I set out to build and automate a data pipeline moving data from an onPrem SQL server to Databricks Unity Catalog. Then, by using DBT on Medallion Architecture  perform transformations and create two data marts: Sales and Product. At the end of the pipeline, the resultant data marts were analysed via Power BI.
 
 **Key Points of Note are below**:
 
-- Best practices of enterprise security and governance were used in the form of storing secrets in Azure Keyvault and Azure Entra ID.
+- Best practices of enterprise security and governance were used in the form of storing secrets in Azure Keyvault and using Azure Entra ID.
 
 - A maintainable workflow was also used in the form of pipeline parameters for values such as DBT account ID and Job ID.
 
@@ -30,17 +30,17 @@ The Azure Data Factory pipeline can also be seen below:
 ### Brief Explanation of Pipeline
 The pipeline ingested data from an on-prem SQL database into Azure Data Lake. Then, via a SQL script it was loaded into Databricks Unity Catalog in a Bronze container. Then, via a web activity a DBT access token was retrieved from Azure Keyvault and the DBT transformation and data marts job was run via another web activity by accessing the DBT API.  
 
-The transformation and data marts job was perfomed on the data in the Databricks Bronze container.  
+The transformation and data marts job was performed on the data in the Databricks Bronze container.  
 
-Lastly, an Until activity was used to poll the DBT API every 20 seconds to check if the DBT transformation and data marts job was complete returning either a success or fail message.  
+Lastly, an Until activity, alongside further nested activities, were used to poll the DBT API every 20 seconds to check if the DBT transformation and data marts job was complete. This returned either a success or fail message.  
 On fail, the pipeline stopped running.  
-On success, the transformed data was loaded into a Silver container in Databricks Unity Catalog and the two data marts were loaded into their respective Gold containers. Thus, allowing easy access for different business stakeholders.
+On success, the transformed data was loaded into a Silver container in Databricks Unity Catalog and the two data marts were loaded into their respective Gold containers. This allowed easy access for different business stakeholders.
 
 
 -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 
-Medallion Archtecture
+Medallion Architecture
 
 Using Databricks and SQL scripts, I  copied all tables into Unity Catalog bronze folder.
 
@@ -67,7 +67,7 @@ security best practices such as Azure Key Vault, maintainability with using pipe
 
 - **Microsoft Hyper-V** - to recreate an enterprise environment by creating an isolated virtual machine to house the project.
 
-## Detailed Explantion of Data Pipeline
+## Detailed Explanation of Data Pipeline
 For reference, the full data pipeline diagram can be seen below:
 
 ![](assets/Screenshot_data-pipeline.png)
@@ -76,7 +76,31 @@ For reference, the full data pipeline diagram can be seen below:
 The Azure Data Factory pipeline can also be seen below:
 ![](assets/Screenshot_datafactory-pipeline.png)
 
-Link to dbt macros, models, staging --> silver, marts --> gold. 
+1. Ingestion (On-Prem to Bronze):
+   * Azure Data Factory ingests data from SQL Server using a Lookup activity.
+   * Using a a ForEach activity, data is extracted raw and converted to Parquet files in the Bronze Storage Container in Data Lake.
+
+2. The data is then loaded into Databricks Unity Catalog using SQL scripts (highly efficient compared to Python scripts, give some technical detail here)
+
+3. Using a Web activity, a DBT token is retrieved from Azure Key Vault with an API call
+
+4. Using a Web activity, the DBT transformation job is initiated by an API call. This uses the Token from the previous step. build: transform, data marts, details in DBT walkthrough section
+
+5. Then, the DBT run ID is stored inside a pipeline variable.
+ 
+6. Using an Until activity, there are 4 nested activities:
+   1. A Wait activity waits for 20 seconds
+   2. A Web activity (get_dbt_run) retrieves the DBT run ID and polls the DBT API checking if the DBT job was successful or failed.
+   3. The pipeline variable job_status is set here with some conditional logic. The logic is where if the output of get_dbt_run (the previous step) is 10, is sets the job_status variable as the string 'false', otherwise it sets it as the string 'true'.
+   4. An If activity which outlines the pipeline logic if the job is failed. This contains 2 nested activities:
+      1. If the job is successful, the pipeline stops polling the DBT API.
+      2. If the job is failed, the pipeline stops completely and returns an error message.
+
+- Link to dbt macros, models, staging --> silver, marts --> gold. 
+
+## DBT walkthrough
+- Include screenshots of DBT models etc.
+
 
 
 ## Conclusion
