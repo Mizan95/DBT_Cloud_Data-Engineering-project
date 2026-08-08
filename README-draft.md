@@ -1,8 +1,8 @@
 # DBT Data Engineering Project
 
 ## 🟨To do (DELETE when done)
-- ❌make dashboards in Power BI
-- ❌Link to dashboard images
+- ✅make dashboards in Power BI
+- ✅Link to dashboard images
 - ✅Copy all links again with forward slashes now setting is toggled for that
 - ✅Do conclusion
 - final clean up
@@ -111,7 +111,11 @@ The Azure Data Factory pipeline can also be seen below:
   
 5. **Business Data Analysis**:
 
-   - Lastly, the data marts in Databricks Unity Catalog are connected to Power BI using the in-built Power BI connection file (.pbids) within Databricks. This allows on-demand analysis and the creation of dashboards Sales and Product.
+   - Lastly, the data marts in Databricks Unity Catalog are connected to Power BI using the in-built Power BI connection file (.pbids) within Databricks. This allows on-demand analysis and the creation of dashboards Sales and Product. I then made relationships between the tables using Star Schema method and created 2 dashboards: one for the Sales data mart and the other for the Product data mart.
+   - Both of these dashboards have the ability to be updated in realtime as the pipeline is automated daily.
+   - Screenshots of dashboards below:
+   ![](assets/Power-BI/sales-dashboard.png)
+   ![](assets/Power-BI/product-dashboard.png)
 
 
 
