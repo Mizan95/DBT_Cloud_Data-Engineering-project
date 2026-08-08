@@ -1,7 +1,7 @@
 # DBT Data Engineering Project
 
 ## Introduction
-In this DBT data engineering pipeline project, I set out to build and automate a data pipeline moving data from an onPrem SQL server to Databricks Unity Catalog. Then, by using DBT on Medallion Architecture  perform transformations and create two data marts: Sales and Product. At the end of the pipeline, the resultant data marts were analysed via Power BI. The pipeline was scheduled to automatically run daily.
+In this DBT data engineering pipeline project, I set out to build and automate a data pipeline moving data from an onPrem SQL server to Databricks Unity Catalog. Then, by using DBT on Medallion Architecture perform transformations and create two data marts: Sales and Product. At the end of the pipeline, the resultant data marts were analysed via Power BI. The pipeline was scheduled to automatically run daily.
 
 **Key Points of Note are below**:
 
@@ -40,21 +40,6 @@ On success, the transformed data was loaded into a Silver container in Databrick
 
 Lastly, I connected Power BI to the two datamarts in Databricks Unity Catalog via a pbids file and analysed the data to produce two business-ready dashboards.
 
-
--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-
-
-Medallion Architecture
-
-Using Databricks and SQL scripts, I  copied all tables into Unity Catalog bronze folder.
-
-Using DBT, I built staging models and moved the data into silver folder in Databricks unity catalog.
-
-Then, I made two data marts: Sales and Product. Both these data marts were built in the gold folder in Databricks unity catalog.
-
-security best practices such as Azure Key Vault, maintainability with using pipeline parameters
-
--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 ## Tools I used
 - **DBT Cloud** - to perform modular transformations and build Sales and Product data marts using models and macros which were then loaded back into Databricks Unity Catalog.
@@ -99,7 +84,7 @@ The Azure Data Factory pipeline can also be seen below:
      1. A Wait activity waits for 20 seconds to avoid API throttling.
      2. A second Web activity (get_dbt_run) retrieves the DBT run ID and polls the DBT API checking if the DBT job was successful or failed.
      3.  A Set Variable activity is used to set the pipeline variable *job_status* with some conditional logic. The logic is where if the output of get_dbt_run (the previous step) is 10, it sets the job_status variable as the string 'false', otherwise it sets it as the string 'true'.  
-     Why 10? 10 is the job status value returned by the DBT API indicating a successful job. If it returns a success
+     Why 10? 10 is the job status value returned by the DBT API indicating a successful job. If it returns a success, the pipeline successfully stops. If it returns true, then it initiates the next activity which handles the logic if the DBT job fails.
      4. An If activity which outlines the pipeline logic if the job is failed. This contains 2 nested activities:
         -  A set variable activity which checks the JSON output of the activity get_dbt_run.data.in_progress whether it is true or false. It then sets the dbt_job_status pipeline variable as this value as a string format.
         -  A fail activity which stops the pipeline completely and returns an error message.
@@ -107,11 +92,46 @@ The Azure Data Factory pipeline can also be seen below:
   
 5. **Data Analysis**:
 
-   - Lastly, the data marts in Databricks Unity Catalog is connected to Power BI using the in-built Power BI connection file (.pbids) within Databricks. This allows on-demand analysis and the creation of dashboards Sales and Product. **Images below**
+   - Lastly, the data marts in Databricks Unity Catalog are connected to Power BI using the in-built Power BI connection file (.pbids) within Databricks. This allows on-demand analysis and the creation of dashboards Sales and Product. **Images below**
 
 
 
 ## DBT walkthrough
+This section walks you through what work I did in DBT.
+
+1. **Setting up development workspace and environment**
+   - I set up DBT to connect with Databricks using an access token. I also set up a dev environment in DBT and connected it to a Github repository.
+   - I also initialised the dbt-project.yml file for project configurations.
+   Workspace screenshot can be seen below:
+   ![](assets\DBT\dbt_workspace.png)
+
+2. **Staging Model Creation (Bronze to Silver layer)**
+   - I initialised the staging yml file (src_saleslt.yml) for staging model configurations. This defined the staging models and performed null and unique tests on the tables ingested from Databricks.
+   - I then created the staging sql files applying 2 transformations with a macro and using column logic using DBT jinja.  
+   **The raw SQL files can be accessed here**  
+   The resultant DAG can be seen below:
+   ![](assets\DAGs\dag_src_saleslt.yml.png)
+
+3. **Sales Data Mart Creation (Silver to Gold layer 1)**
+- I initialised the Sales Data Mart yml file (sales.yml) for the data mart model configurations. This defined the models for this data mart, performed null and unique tests on the tables and defined relationships between dimension tables, bridge table and fact table.
+- I then created sales mart sql files for the fact tables and dimension tables. **The raw SQL files can be accessed here**  
+The resultant DAG can be seen below:
+![](assets\DAGs\dag_sales.yml.png)
+
+1. **Product Data Mart Creation (Silver to Gold layer 2)**
+- I initialised the Product Data Mart yml file (product.yml) for the data mart model configurations. This defined the models for this data mart, performed null and unique tests on the tables and defined relationships between dimension tables, bridge table and fact table.
+- I then created sales mart sql files for the fact tables and dimension tables. **The raw SQL files can be accessed here**  
+The resultant DAG can be seen below:
+![](assets\DAGs\dag_product.yml.png)
+
+
+
+
+1. what I did
+2. screenshots og DAGs
+3. point to SQL code (models/macros/yml files)
+4. special mention of dbt-project.yml
+
 - Include screenshots of DBT models etc.
 - Link to dbt macros, models, staging --> silver, marts --> gold. 
 
@@ -122,7 +142,7 @@ The Azure Data Factory pipeline can also be seen below:
 ---------------------------
 ## Notes:
 
-Staging folder contains data cleansing activty bronze --> silver
+Staging folder contains data cleansing activity bronze --> silver
 
 - creation of macro
 - setting up project yml
