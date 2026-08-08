@@ -83,7 +83,7 @@ This section walks you through what work I did in DBT. I used DBT cloud as oppos
      -  add a timestamp column showing when dbt processed this change. 
      -  reducing numeric currency column values to two decimal points.  
    **The YML and SQL files can be accessed [here](models/staging)**  
-   **The Macro file can be accessed here**  
+   **The Macro file can be accessed [here](macros/clean_date.sql)**  
    The resultant DAG can be seen below:
    ![](assets/DAGs/dag_src_saleslt.yml.png)
 
