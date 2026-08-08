@@ -1,9 +1,11 @@
 # DBT Data Engineering Project
 
 ## 🟨To do (DELETE when done)
-- make dashboards in Power BI
-- Link to dashboard images
-- Copy all links again with forward slashes now setting is toggled for that
+- ❌make dashboards in Power BI
+- ❌Link to dashboard images
+- ✅Copy all links again with forward slashes now setting is toggled for that
+- ✅Do conclusion
+- final clean up
 
 ## Introduction
 In this DBT data engineering pipeline project, I set out to build and automate a data pipeline moving data from an onPrem SQL server to Databricks Unity Catalog. Then, by using **DBT Cloud** on Medallion Architecture, perform transformations and create two data marts: Sales and Product. At the end of the pipeline, the resultant data marts were analysed via Power BI. The pipeline was automated to run daily.
@@ -60,13 +62,9 @@ For reference, the full data pipeline diagram can be seen below:
 
 ![](assets/Screenshot_data-pipeline.png)
 
-
-The Azure Data Factory pipeline can also be seen below:
-![](assets/Screenshot_datafactory-pipeline.png)
-
 The pipeline ingested data from an on-prem SQL database into Azure Data Lake. Then, via a SQL script it was loaded into Databricks Unity Catalog in a Bronze container. Then, via a web activity a DBT access token was retrieved from Azure Keyvault. Next, by accessing the DBT API the DBT transformation and data marts job was run via a second web activity.  
 
-**Details on my DBT activities will come up in an upcoming section titled [DBT Walkthrough](#DBT-walkthrough).** 
+**Details on my DBT activities comes up in an upcoming section titled [DBT Walkthrough](#DBT-walkthrough).** 
 
 The DBT transformation and data marts job was performed on the data in the Databricks Bronze container.  
 
@@ -157,55 +155,13 @@ This section walks you through what work I did in DBT. I used DBT cloud as oppos
 
 
 ## Conclusion
+In conclusion, this DBT data engineering project boosted my confidence in using DBT Cloud as a modern data transformation tool. 
+I created staging models in the silver layer and data marts for the gold layer, all in the industry-prized medallion architecture. 
+It also gave me a great opportunity on exposure to DAGs which are essentially flow diagrams showing the source of each model.  
+DAGs are what make DBT a great tool for transformations. Azure Databricks lacks such a feature and for a typical analytics engineer using raw Python and SQL scripts to perform transformations on all their tables, things will get pretty convoluted over the course of a project. Questions arising such as 'Where did this table come from?' or 'Was this an inner join or outer join?' soon crop up.
+But with DAGs I see great enterprise usefulness in tracking data lineage all the way back to the source files.  
+And along with tracking via Git version control, this makes DBT a valuable tool for every analytics engineer.  
+
+I am happy to have completed this project and combine my previous Azure data engineering project with an automated DBT Cloud workflow. I look forward to my next challenge.
 
 
-
-## Notes:
-
-Staging folder contains data cleansing activity bronze --> silver
-
-- creation of macro
-- setting up project yml
-- creation of staging sql files
-  - data cleansing all column headers (using Jinja)
-  - in Product model, transforms decimal numbers to two decimal points for the columns containing float numbers
-
-## mart folder silver --> gold
-
-### sales mart
-
-- creating fct_sales table by inner joining stg_salesorderheader and stg_salesorderdetail models
-- creating address and customer dimension tables
-- creating customer and address bridge table to solve many-to-many relationship between address and customer dimension tables
-- adding sales mart schema in dbt_project.yml file
-
-### product mart
-
-- creating dimension tables: product, product category, product description, product model
-- creating product model and product description bridge table to solve many-to-many relationship between product model and product description dimension tables
-- configuring dimension tables, bridge tables and their relationships in the product.yml file
-- adding product mart schema in dbt_project.yml file
-
-- creating dbt docs
-
-### Automation
-
-
----
-
-Welcome to your new dbt project!
-
-### Using the starter project
-
-Try running the following commands:
-
-- dbt run
-- dbt test
-
-### Resources:
-
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [dbt community](https://getdbt.com/community) to learn from other analytics engineers
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
