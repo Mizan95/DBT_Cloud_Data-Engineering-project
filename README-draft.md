@@ -86,11 +86,13 @@ The Azure Data Factory pipeline can also be seen below:
    * Using a ForEach activity, data is extracted raw and converted to Parquet files into Data Lake.
 
 2. **Extraction and Load**:
-   - Using SQL scripts in Databricks, the data is then loaded into a Bronze container in Databricks Unity Catalog. **(SQL scripts can be accessed here)** *(highly efficient compared to Python scripts, give some technical detail here)*
+   - Using SQL scripts in Databricks, the data is then loaded into a Bronze container in Databricks Unity Catalog. 
+   - **SQL scripts can be accessed** [here](assets\code-snippets\create-bronze-tables-into-unity-catalog.ipynb) 
+   - Using SQL scripts over Python scripts is highly efficient as SQL uses the Databricks backend C++ engine and is more optimised for Data ingestion tasks.
 
 3. **Transformation**:
    - Using a Web activity, a DBT token is retrieved from Azure Key Vault by an API call.
-   - Using a second Web activity, the DBT transformation job is initiated by an API call. This uses the Token from the previous step. **The DBT build, transformations performed and resultant data marts will be discussed in DBT walkthrough section.**
+   - Using a second Web activity, the DBT transformation job is initiated by an API call. This uses the Token from the previous step. **The DBT build, transformations performed and resultant data marts will be discussed in the DBT walkthrough section.** Click [here](#DBT-walkthrough) to go straight there.
    - Using a Set Variable activity, the DBT run ID (taken from the output of the previous activity) is stored inside the pipeline variable *dbt_run_id*.
  
 4. **Polling DBT API and Pipeline end**:
@@ -106,7 +108,7 @@ The Azure Data Factory pipeline can also be seen below:
   
 5. **Business Data Analysis**:
 
-   - Lastly, the data marts in Databricks Unity Catalog are connected to Power BI using the in-built Power BI connection file (.pbids) within Databricks. This allows on-demand analysis and the creation of dashboards Sales and Product. **Images below**
+   - Lastly, the data marts in Databricks Unity Catalog are connected to Power BI using the in-built Power BI connection file (.pbids) within Databricks. This allows on-demand analysis and the creation of dashboards Sales and Product. **Dashboard Images below**
 
 
 
@@ -125,7 +127,7 @@ This section walks you through what work I did in DBT. I used DBT cloud as oppos
      -  formatting the all date columns to remove hours, minutes, seconds. Jinja logic was also used to loop through each column in every table to assess if it was a date column. 
      -  add a timestamp column showing when dbt processed this change. 
      -  reducing numeric currency column values to two decimal points.  
-   **The YML and SQL files can be accessed here**  
+   **The YML and SQL files can be accessed [here](models\staging)**  
    **The Macro file can be accessed here**  
    The resultant DAG can be seen below:
    ![](assets\DAGs\dag_src_saleslt.yml.png)
@@ -133,14 +135,14 @@ This section walks you through what work I did in DBT. I used DBT cloud as oppos
 3. **Sales Data Mart Creation (Silver to Gold layer 1)**
    - I initialised the Sales Data Mart yml file (sales.yml) for the data mart model configurations. This defined the models for this data mart, performed null and unique tests on the tables and defined relationships between dimension tables, bridge table and fact table.
    - I then created sales mart sql files for the fact tables and dimension tables.  
-   **The YML and SQL files can be accessed here**  
+   **The YML and SQL files can be accessed [here](models\marts\sales)**  
    The resultant DAG can be seen below:
    ![](assets\DAGs\dag_sales.yml.png)
 
 4. **Product Data Mart Creation (Silver to Gold layer 2)**
    - I initialised the Product Data Mart yml file (product.yml) for the data mart model configurations. This defined the models for this data mart, performed null and unique tests on the tables and defined relationships between dimension tables, bridge table and fact table.
    - I then created sales mart sql files for the fact tables and dimension tables.  
-   **The YML and SQL files can be accessed here**  
+   **The YML and SQL files can be accessed [here](models\marts\product)**  
    The resultant DAG can be seen below:
    ![](assets\DAGs\dag_product.yml.png)
 
