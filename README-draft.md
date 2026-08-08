@@ -1,12 +1,5 @@
 # DBT Data Engineering Project
 
-## 🟨To do (DELETE when done)
-- ✅make dashboards in Power BI
-- ✅Link to dashboard images
-- ✅Copy all links again with forward slashes now setting is toggled for that
-- ✅Do conclusion
-- final clean up
-
 ## Introduction
 In this DBT data engineering pipeline project, I set out to build and automate a data pipeline moving data from an onPrem SQL server to Databricks Unity Catalog. Then, by using **DBT Cloud** on Medallion Architecture, perform transformations and create two data marts: Sales and Product. At the end of the pipeline, the resultant data marts were analysed via Power BI. The pipeline was automated to run daily.
 
@@ -20,21 +13,21 @@ In this DBT data engineering pipeline project, I set out to build and automate a
 
 - I also used a maintainable workflow in the form of pipeline parameters for values such as DBT account ID and Job ID.
 
-- The pipeline was one of ELT as opposed to ETL as the data was loaded into Databricks Unity Catalog first before being transformed with DBT.
+- The pipeline was one of ELT as opposed to ETL as the data was loaded into Databricks Unity Catalog first before being transformed with DBT Cloud.
 
-- I performed the pipeline orchestration using Azure Data Factory.
+- I performed the pipeline orchestration using Azure Data Factory due to its visual, almost flow-chart like nature. This makes pipeline orchestration easier.
 
 - To recreate an enterprise environment, I used Microsoft Hyper-V to create an isolated virtual machine to house the entire project.
 
 - I used the public Microsoft dataset named 'Adventure Works 2025'. This is a public fictional dataset which represents enterprise sales data of a sports retailer called Adventure Works.
 
 
-The full data pipeline diagram can be seen below:
+My full data pipeline diagram can be seen below:
 
 ![](assets/Screenshot_data-pipeline.png)
 
 
-The Azure Data Factory pipeline can also be seen below:
+My Azure Data Factory pipeline can also be seen below:
 ![](assets/Screenshot_datafactory-pipeline.png)
 
 My DBT Cloud workspace can be seen below:
@@ -53,7 +46,7 @@ My DBT Cloud workspace can be seen below:
 
 - **Microsoft SQL Server** - the source on-Prem SQL database management system that initially held the data.
 
-- **Microsoft Power BI** - to visually analyse the data from Azure Synapse Analytics using Star Schema method
+- **Microsoft Power BI** - to visually analyse the data from Databricks using Star Schema method
 
 - **Microsoft Hyper-V** - to recreate an enterprise environment by creating an isolated virtual machine to house the project.
 
@@ -64,9 +57,7 @@ For reference, the full data pipeline diagram can be seen below:
 
 The pipeline ingested data from an on-prem SQL database into Azure Data Lake. Then, via a SQL script it was loaded into Databricks Unity Catalog in a Bronze container. Then, via a web activity a DBT access token was retrieved from Azure Keyvault. Next, by accessing the DBT API the DBT transformation and data marts job was run via a second web activity.  
 
-**Details on my DBT activities comes up in an upcoming section titled [DBT Walkthrough](#DBT-walkthrough).** 
-
-The DBT transformation and data marts job was performed on the data in the Databricks Bronze container.  
+**Details on my DBT activities come up in an upcoming section titled DBT Walkthrough. Click [here to go there now](#DBT-walkthrough).** 
 
 Lastly, an Until activity, alongside further nested activities, were used to poll the DBT API every 20 seconds to check if the DBT transformation and data marts job was complete. This returned either a success or fail message.  
 On fail, the pipeline stopped running.  
@@ -91,7 +82,7 @@ The Azure Data Factory pipeline can also be seen below:
 2. **Extraction and Load**:
    - Using SQL scripts in Databricks, the data is then loaded into a Bronze container in Databricks Unity Catalog. 
    - **SQL scripts can be accessed** [here](assets/code-snippets/create-bronze-tables-into-unity-catalog.ipynb) 
-   - Using SQL scripts over Python scripts is highly efficient as SQL uses the Databricks backend C++ engine and is more optimised for Data ingestion tasks.
+   - Using SQL scripts over Python scripts is highly efficient as SQL uses the Databricks backend C++ engine and is more optimised for Data ingestion tasks. This allows cost-savings as well as less computational overhead.
 
 3. **Transformation**:
    - Using a Web activity, a DBT token is retrieved from Azure Key Vault by an API call.
@@ -107,7 +98,7 @@ The Azure Data Factory pipeline can also be seen below:
      4. An If activity which outlines the pipeline logic if the job is failed. This contains 2 nested activities:
         -  A set variable activity which checks the JSON output of the activity get_dbt_run.data.in_progress whether it is true or false. It then sets the dbt_job_status pipeline variable as this value as a string format.
         -  A fail activity which stops the pipeline completely and returns an error message.
-   -  On success of the pipeline, DBT builds staging models into a Silver container in Databricks Unity Catalog. It also builds production models in the form of two data marts: Sales and Product. Both these data marts are built in their respective Gold containers in Databricks unity catalog.
+   -  On success of the pipeline, DBT builds staging models into a Silver container in Databricks Unity Catalog. It also builds production models in the form of two data marts: Sales and Product. Both these data marts are built in their respective Gold containers in Databricks unity catalog. These are ready for business stakeholders to use the data.
   
 5. **Business Data Analysis**:
 
@@ -166,6 +157,6 @@ DAGs are what make DBT a great tool for transformations. Azure Databricks lacks 
 But with DAGs I see great enterprise usefulness in tracking data lineage all the way back to the source files.  
 And along with tracking via Git version control, this makes DBT a valuable tool for every analytics engineer.  
 
-I am happy to have completed this project and combine my previous Azure data engineering project with an automated DBT Cloud workflow. I look forward to my next challenge.
+I am happy to have completed this DBT project and combined my previous Azure data engineering project with an automated DBT Cloud workflow. I look forward to my next challenge.
 
 
