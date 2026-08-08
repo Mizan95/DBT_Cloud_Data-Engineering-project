@@ -1,5 +1,10 @@
 # DBT Data Engineering Project
 
+## 🟨To do (DELETE when done)
+- make dashboards in Power BI
+- Link to dashboard images
+- Copy all links again with forward slashes now setting is toggled for that
+
 ## Introduction
 In this DBT data engineering pipeline project, I set out to build and automate a data pipeline moving data from an onPrem SQL server to Databricks Unity Catalog. Then, by using **DBT Cloud** on Medallion Architecture, perform transformations and create two data marts: Sales and Product. At the end of the pipeline, the resultant data marts were analysed via Power BI. The pipeline was automated to run daily.
 
@@ -149,19 +154,13 @@ This section walks you through what work I did in DBT. I used DBT cloud as oppos
 
 
 
-5. what I did
-6. screenshots og DAGs
-7. point to SQL code (models/macros/yml files)
-8. special mention of dbt-project.yml
 
-- Include screenshots of DBT models etc.
-- Link to dbt macros, models, staging --> silver, marts --> gold. 
 
 
 ## Conclusion
 
 
----------------------------
+
 ## Notes:
 
 Staging folder contains data cleansing activity bronze --> silver
