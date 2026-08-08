@@ -59,58 +59,13 @@ For reference, the full data pipeline diagram can be seen below:
 
 The pipeline ingested data from an on-prem SQL database into Azure Data Lake. Then, via a SQL script it was loaded into Databricks Unity Catalog in a Bronze container. Then, via a web activity a DBT access token was retrieved from Azure Keyvault. Next, by accessing the DBT API the DBT transformation and data marts job was run via a second web activity.  
 
-**Details on my DBT activities come up in an upcoming section titled DBT Walkthrough. Click [here to go there now](#DBT-walkthrough).** 
+**Details on my DBT activities come up in the next section titled DBT Walkthrough. Click [here to go there now](#DBT-walkthrough).** 
 
 Lastly, an Until activity, alongside further nested activities, were used to poll the DBT API every 20 seconds to check if the DBT transformation and data marts job was complete. This returned either a success or fail message.  
 On fail, the pipeline stopped running.  
 On success, the transformed data was loaded into a Silver container in Databricks Unity Catalog and the two data marts were loaded into their respective Gold containers. This allowed easy access for different business stakeholders.
 
 Lastly, I connected Power BI to the two datamarts in Databricks Unity Catalog via a pbids file and analysed the data to produce two business-ready dashboards.
-
-
-## Detailed Explanation of Pipeline
-For reference, the full data pipeline diagram can be seen below:
-
-![](assets/Screenshot_data-pipeline.png)
-
-
-The Azure Data Factory pipeline can also be seen below:
-![](assets/Screenshot_datafactory-pipeline.png)
-
-1. **Ingestion**:
-   * Azure Data Factory ingests data from SQL Server using a Lookup activity.
-   * Using a ForEach activity, data is extracted raw and converted to Parquet files into Data Lake.
-
-2. **Extraction and Load**:
-   - Using SQL scripts in Databricks, the data is then loaded into a Bronze container in Databricks Unity Catalog. 
-   - **SQL scripts can be accessed** [here](assets/code-snippets/create-bronze-tables-into-unity-catalog.ipynb) 
-   - Using SQL scripts over Python scripts is highly efficient as SQL uses the Databricks backend C++ engine and is more optimised for Data ingestion tasks. This allows cost-savings as well as less computational overhead.
-
-3. **Transformation**:
-   - Using a Web activity, a DBT token is retrieved from Azure Key Vault by an API call.
-   - Using a second Web activity, the DBT transformation job is initiated by an API call. This uses the Token from the previous step. **The DBT build, transformations performed and resultant data marts will be discussed in the DBT walkthrough section.** Click [here](#DBT-walkthrough) to go straight there.
-   - Using a Set Variable activity, the DBT run ID (taken from the output of the previous activity) is stored inside the pipeline variable *dbt_run_id*.
- 
-4. **Polling DBT API and Pipeline end**:
-   - Using an Until activity, there are 4 nested activities:
-     1. A Wait activity waits for 20 seconds to avoid API throttling.
-     2. A second Web activity (get_dbt_run) retrieves the DBT run ID and polls the DBT API checking if the DBT job was successful or failed.
-     3.  A Set Variable activity is used to set the pipeline variable *job_status* with some conditional logic. The logic is where if the output of get_dbt_run (the previous step) is 10, it sets the job_status variable as the string 'false', otherwise it sets it as the string 'true'.  
-     Why 10? 10 is the job status value returned by the DBT API indicating a successful job. If it returns a success, the pipeline successfully stops. If it returns true, then it initiates the next activity which handles the logic if the DBT job fails.
-     4. An If activity which outlines the pipeline logic if the job is failed. This contains 2 nested activities:
-        -  A set variable activity which checks the JSON output of the activity get_dbt_run.data.in_progress whether it is true or false. It then sets the dbt_job_status pipeline variable as this value as a string format.
-        -  A fail activity which stops the pipeline completely and returns an error message.
-   -  On success of the pipeline, DBT builds staging models into a Silver container in Databricks Unity Catalog. It also builds production models in the form of two data marts: Sales and Product. Both these data marts are built in their respective Gold containers in Databricks unity catalog. These are ready for business stakeholders to use the data.
-  
-5. **Business Data Analysis**:
-
-   - Lastly, the data marts in Databricks Unity Catalog are connected to Power BI using the in-built Power BI connection file (.pbids) within Databricks. This allows on-demand analysis and the creation of dashboards Sales and Product. I then made relationships between the tables using Star Schema method and created 2 dashboards: one for the Sales data mart and the other for the Product data mart.
-   - Both of these dashboards have the ability to be updated in realtime as the pipeline is automated daily.
-   - Screenshots of dashboards below:
-   ![](assets/Power-BI/sales-dashboard.png)
-   ![](assets/Power-BI/product-dashboard.png)
-
-
 
 ## DBT-walkthrough
 This section walks you through what work I did in DBT. I used DBT cloud as opposed to DBT Core. This was because in enterprise environments, DBT Cloud is the preferred tool due to its GUI and ease of use.
@@ -148,6 +103,47 @@ This section walks you through what work I did in DBT. I used DBT cloud as oppos
 
 
 
+## Detailed Explanation of Pipeline
+For reference, the full data pipeline diagram can be seen below:
+
+![](assets/Screenshot_data-pipeline.png)
+
+
+The Azure Data Factory pipeline can also be seen below:
+![](assets/Screenshot_datafactory-pipeline.png)
+
+1. **Ingestion**:
+   * Azure Data Factory ingests data from SQL Server using a Lookup activity.
+   * Using a ForEach activity, data is extracted raw and converted to Parquet files into Data Lake.
+
+2. **Extraction and Load**:
+   - Using SQL scripts in Databricks, the data is then loaded into a Bronze container in Databricks Unity Catalog. 
+   - **SQL scripts can be accessed** [here](assets/code-snippets/create-bronze-tables-into-unity-catalog.ipynb) 
+   - Using SQL scripts over Python scripts is highly efficient as SQL uses the Databricks backend C++ engine and is more optimised for Data ingestion tasks. This allows cost-savings as well as less computational overhead.
+
+3. **Transformation**:
+   - Using a Web activity, a DBT token is retrieved from Azure Key Vault by an API call.
+   - Using a second Web activity, the DBT transformation job is initiated by an API call. This uses the Token from the previous step. **The DBT build, transformations performed and resultant data marts have been discussed in the DBT walkthrough section.** Click [here to go back there](#DBT-walkthrough).
+   - Using a Set Variable activity, the DBT run ID (taken from the output of the previous activity) is stored inside the pipeline variable *dbt_run_id*.
+ 
+4. **Polling DBT API and Pipeline end**:
+   - Using an Until activity, there are 4 nested activities:
+     1. A Wait activity waits for 20 seconds to avoid API throttling.
+     2. A second Web activity (get_dbt_run) retrieves the DBT run ID and polls the DBT API checking if the DBT job was successful or failed.
+     3.  A Set Variable activity is used to set the pipeline variable *job_status* with some conditional logic. The logic is where if the output of get_dbt_run (the previous step) is 10, it sets the job_status variable as the string 'false', otherwise it sets it as the string 'true'.  
+     Why 10? 10 is the job status value returned by the DBT API indicating a successful job. If it returns a success, the pipeline successfully stops. If it returns true, then it initiates the next activity which handles the logic if the DBT job fails.
+     4. An If activity which outlines the pipeline logic if the job is failed. This contains 2 nested activities:
+        -  A set variable activity which checks the JSON output of the activity get_dbt_run.data.in_progress whether it is true or false. It then sets the dbt_job_status pipeline variable as this value as a string format.
+        -  A fail activity which stops the pipeline completely and returns an error message.
+   -  On success of the pipeline, DBT builds staging models into a Silver container in Databricks Unity Catalog. It also builds production models in the form of two data marts: Sales and Product. Both these data marts are built in their respective Gold containers in Databricks unity catalog. These are ready for business stakeholders to use the data.
+  
+5. **Business Data Analysis**:
+
+   - Lastly, the data marts in Databricks Unity Catalog are connected to Power BI using the in-built Power BI connection file (.pbids) within Databricks. This allows on-demand analysis and the creation of dashboards Sales and Product. I then made relationships between the tables using Star Schema method and created 2 dashboards: one for the Sales data mart and the other for the Product data mart.
+   - Both of these dashboards have the ability to be updated in realtime as the pipeline is automated daily.
+   - Screenshots of dashboards below:
+   ![](assets/Power-BI/sales-dashboard.png)
+   ![](assets/Power-BI/product-dashboard.png)
 
 
 
