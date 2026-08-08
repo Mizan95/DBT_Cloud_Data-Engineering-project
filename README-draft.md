@@ -3,7 +3,24 @@
 ## Introduction
 In this DBT data engineering pipeline project, I set out to build and automate a data pipeline moving data from an onPrem SQL server to Databricks Unity Catalog. Then, by using **DBT Cloud** on Medallion Architecture, perform transformations and create two data marts: Sales and Product. At the end of the pipeline, the resultant data marts were analysed via Power BI. The pipeline was automated to run daily.
 
-**Key Points of Note are below**:
+## Tools I used
+- **DBT Cloud** - to perform modular transformations and build Sales and Product data marts using models and macros which were then loaded back into Databricks Unity Catalog.
+
+- **Databricks** - the platform to load the data into Unity Catalog in the ELT process.
+
+- **Azure Data Factory** - to orchestrate the ELT pipeline
+
+- **Azure Data Lake** - to act as a bridge between Microsoft SQL Server and Databricks Unity Catalog.
+
+- **Azure Entra ID fka Active Directory** - to securely store DBT and Databricks API tokens and programmatically use these in the pipeline for best practice in security and governance.
+
+- **Microsoft SQL Server** - the source on-Prem SQL database management system that initially held the data.
+
+- **Microsoft Power BI** - to visually analyse the data from Databricks using Star Schema method
+
+- **Microsoft Hyper-V** - to recreate an enterprise environment by creating an isolated virtual machine to house the project.
+
+## Key Points of Note
 
 - I used DBT cloud as opposed to DBT Core. This was because in enterprise environments, DBT Cloud is the preferred tool due to its GUI and ease of use.
 
@@ -33,22 +50,7 @@ My Azure Data Factory pipeline can also be seen below:
 My DBT Cloud workspace can be seen below:
 ![](assets/DBT/dbt_workspace.png)
 
-## Tools I used
-- **DBT Cloud** - to perform modular transformations and build Sales and Product data marts using models and macros which were then loaded back into Databricks Unity Catalog.
 
-- **Databricks** - the platform to load the data into Unity Catalog in the ELT process.
-
-- **Azure Data Factory** - to orchestrate the ELT pipeline
-
-- **Azure Data Lake** - to act as a bridge between Microsoft SQL Server and Databricks Unity Catalog.
-
-- **Azure Entra ID fka Active Directory** - to securely store DBT and Databricks API tokens and programmatically use these in the pipeline for best practice in security and governance.
-
-- **Microsoft SQL Server** - the source on-Prem SQL database management system that initially held the data.
-
-- **Microsoft Power BI** - to visually analyse the data from Databricks using Star Schema method
-
-- **Microsoft Hyper-V** - to recreate an enterprise environment by creating an isolated virtual machine to house the project.
 
 ## Brief Explanation of Pipeline
 For reference, the full data pipeline diagram can be seen below:
