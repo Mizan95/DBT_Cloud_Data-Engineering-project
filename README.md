@@ -1,7 +1,13 @@
 # DBT Cloud Data Engineering Project
 
-## Introduction
-In this DBT data engineering pipeline project, I set out to build and automate a data pipeline moving data from an onPrem SQL server to Databricks Unity Catalog. Then, by using **DBT Cloud** on Medallion Architecture, perform transformations and create two data marts: Sales and Product. At the end of the pipeline, the resultant data marts were analysed via Power BI. The pipeline was automated to run daily.
+## Business Problem
+> Adventure Works, a sports retailer, struggles with accessing customer transactional data. It is in a data silo on their on-premises SQL server. Their have a high data latency with their data team taking a week to produce sales and product reports and presenting it to company directors. There is also zero governance and many mixups with where data came from risking business decisions.  
+> They require an automated data pipeline which automates customer transactional sales and product data into a reporting system. It is also essential to track data sources for best practice in data governance.
+
+## My Solution
+To tackle this problem, I set out to build and automate a data pipeline moving data from their onPrem SQL server to Databricks Unity Catalog. Orchestration is done via Data Factory. The on-prem SQL server is securely connected to Data factory using Integration Runtime.   
+Then, by using **DBT Cloud** on Medallion Architecture, perform transformations and create two data marts: Sales and Product. This serves their analyst needs. DBT cloud also tracks data lineage which serves their data governance needs.  
+At the end of the pipeline, the resultant data marts are connected to Power BI which always receives the latest data. The pipeline is automated to run daily.
 
 ## Tools I used
 - **DBT Cloud** - to perform modular transformations and build Sales and Product data marts using models and macros which were then loaded back into Databricks Unity Catalog.
@@ -20,6 +26,17 @@ In this DBT data engineering pipeline project, I set out to build and automate a
 
 - **Microsoft Hyper-V** - to recreate an enterprise environment by creating an isolated virtual machine to house the project.
 
+My full data pipeline diagram can be seen below:
+
+![](assets/Screenshot_data-pipeline.png)
+
+
+My Azure Data Factory pipeline can also be seen below:
+![](assets/Screenshot_datafactory-pipeline.png)
+
+My DBT Cloud workspace can be seen below:
+![](assets/DBT/dbt_workspace.png)
+
 ## Key Points of Note
 
 - I used DBT cloud as opposed to DBT Core. This was because in enterprise environments, DBT Cloud is the preferred tool due to its GUI and ease of use.
@@ -36,19 +53,7 @@ In this DBT data engineering pipeline project, I set out to build and automate a
 
 - To recreate an enterprise environment, I used Microsoft Hyper-V to create an isolated virtual machine to house the entire project.
 
-- I used the public Microsoft dataset named 'Adventure Works 2025'. This is a public fictional dataset which represents enterprise sales data of a sports retailer called Adventure Works.
-
-
-My full data pipeline diagram can be seen below:
-
-![](assets/Screenshot_data-pipeline.png)
-
-
-My Azure Data Factory pipeline can also be seen below:
-![](assets/Screenshot_datafactory-pipeline.png)
-
-My DBT Cloud workspace can be seen below:
-![](assets/DBT/dbt_workspace.png)
+- I used the public Microsoft dataset named 'Adventure Works 2025'. This is a public dataset which represents enterprise sales data of a fictional sports retailer called Adventure Works.
 
 
 
@@ -150,7 +155,7 @@ The Azure Data Factory pipeline can also be seen below:
 ## Conclusion
 In conclusion, this DBT data engineering project boosted my confidence in using DBT Cloud as a modern data transformation tool. 
 I created staging models in the silver layer and data marts for the gold layer, all in the industry-prized medallion architecture. 
-It also gave me a great opportunity on exposure to DAGs which are essentially flow diagrams showing the source of each model.  
+It also gave me a great opportunity on exposure to DAGs which are essentially flow diagrams showing the source of each model. They are essential for recording and keeping track of data sources.  
 DAGs are what make DBT a great tool for transformations. Azure Databricks lacks such a feature and for a typical analytics engineer using raw Python and SQL scripts to perform transformations on all their tables, things will get pretty convoluted over the course of a project. Questions arising such as 'Where did this table come from?' or 'Was this an inner join or outer join?' soon crop up.
 But with DAGs I see great enterprise usefulness in tracking data lineage all the way back to the source files.  
 And along with tracking via Git version control, this makes DBT a valuable tool for every analytics engineer.  
